@@ -1,122 +1,175 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [topic, setTopic] = useState("");
+  const [level, setLevel] = useState("Beginner");
+  const [duration, setDuration] = useState("");
+  const [goal, setGoal] = useState("");
+
+  const [plan, setPlan] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+  "https://learnpilot-api.onrender.com/api/generate-plan",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      topic,
+      level,
+      duration,
+      goal,
+    }),
+  }
+);
+
+      const data = await response.json();
+
+      console.log(data);
+
+      setPlan(data);
+
+    } catch (error) {
+      console.log(error);
+      alert("Unable to connect to the server.");
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="container">
+      <div className="card">
 
-      <div className="ticks"></div>
+        <h1>Personalized Learning Assistant</h1>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
+        <p className="subtitle">
+          Generate a personalized learning plan using multiple AI agents
+          that work together to support your learning goals.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+
+          <label>Learning Topic</label>
+          <input
+            type="text"
+            placeholder="e.g. Python"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            required
+          />
+
+          <label>Skill Level</label>
+          <select
+            value={level}
+            onChange={(e) => setLevel(e.target.value)}
+          >
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+          </select>
+
+          <label>Duration (Days)</label>
+          <input
+            type="number"
+            placeholder="30"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            required
+          />
+
+          <label>Learning Goal</label>
+          <input
+            type="text"
+            placeholder="e.g. Crack Interviews"
+            value={goal}
+            onChange={(e) => setGoal(e.target.value)}
+            required
+          />
+
+          <button type="submit">
+            Generate Learning Plan
+          </button>
+
+        </form>
+
+
+        <div className="info-box">
+
+          <h3>Multi-Agent Workflow</h3>
+
           <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
+            <li>📅 Planner Agent creates your study roadmap.</li>
+            <li>📚 Content Agent prepares learning material.</li>
+            <li>❓ Quiz Agent generates practice questions.</li>
+            <li>🔗 Resource Agent recommends useful resources.</li>
+            <li>💡 Mentor Agent provides study guidance.</li>
           </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        </div>
+
+
+        {plan && (
+          <div className="result-box">
+
+            <h3>Your Personalized Learning Plan</h3>
+
+            <p>
+              <strong>📅 Planner Agent:</strong>
+              <br />
+              {plan.planner}
+            </p>
+
+
+            <p>
+              <strong>📚 Content Agent:</strong>
+              <br />
+              {plan.content}
+            </p>
+
+
+            <p>
+              <strong>❓ Quiz Agent:</strong>
+            </p>
+
+            <ul>
+              {plan.quiz.map((question, index) => (
+                <li key={index}>
+                  {question}
+                </li>
+              ))}
+            </ul>
+
+
+            <p>
+              <strong>🔗 Resource Agent:</strong>
+            </p>
+
+            <ul>
+              {plan.resources.map((resource, index) => (
+                <li key={index}>
+                  {resource}
+                </li>
+              ))}
+            </ul>
+
+
+            <p>
+              <strong>💡 Mentor Agent:</strong>
+              <br />
+              {plan.mentor}
+            </p>
+
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
