@@ -6,6 +6,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("LearnPilot API is running!");
+});
+
 app.post("/api/generate-plan", (req, res) => {
   const { topic, level, duration, goal } = req.body;
 
